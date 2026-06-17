@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Evaluación de Infraestructura Comercial Digital | e-gestorLab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* =============================================
+   VARIABLES & RESET
+============================================= */
+:root{
+  --bg:#030e1f;
+  --blue:#1a6fff;
+  --orange:#f07600;
+  --gold:#f4b400;
+  --text:#e8edf5;
+  --muted:#7a9abf;
+  --border:rgba(26,111,255,0.18);
+  --card-bg:linear-gradient(160deg,rgba(10,24,48,.92) 0%,rgba(7,18,38,.97) 100%);
+  --radius:16px;
+  --radius-sm:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Barlow',Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  font-size:16px; /* base for rem */
+}
+h1,h2,h3,h4,h5{font-family:'Rajdhani',sans-serif;font-weight:700;}
+img{max-width:100%;display:block;}
+button{cursor:pointer;font-family:inherit;border:none;background:none;}
+
+/* =============================================
+   CANVAS BACKGROUND
+============================================= */
+#bgCanvas{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  z-index:0;pointer-events:none;opacity:.3;
+}
+
+/* =============================================
+   LAYOUT SHELL
+============================================= */
+.page{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh;}
+
+/* =============================================
+   NAV
+============================================= */
+.topnav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;
+  background:rgba(3,14,31,.88);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:200;
+  flex-wrap:nowrap;gap:8px;
+}
+.nav-brand{
+  display:flex;align-items:center;gap:10px;
+  text-decoration:none;flex-shrink:0;
+}
+.nav-logo{height:34px;filter:drop-shadow(0 0 8px rgba(26,111,255,.55));}
+.nav-name{
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.05rem;
+  color:#fff;white-space:nowrap;
+}
+.nav-name em{color:var(--orange);font-style:normal;}
+.nav-badge{
+  font-size:.68rem;font-family:'Rajdhani',sans-serif;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--gold);border:1px solid rgba(244,180,0,.3);
+  background:rgba(244,180,0,.06);border-radius:20px;
+  padding:4px 12px;white-space:nowrap;
+}
+
+/* =============================================
+   MAIN CONTENT AREA
+============================================= */
+.main{
+  flex:1;
+  width:100%;max-width:860px;
+  margin:0 auto;
+  padding:28px 16px 60px;
+}
+
+/* =============================================
+   CARD PANEL
+============================================= */
+.card{
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:clamp(22px,5vw,44px) clamp(18px,5vw,40px);
+  box-shadow:0 0 50px rgba(26,111,255,.1),0 20px 40px rgba(0,0,0,.4);
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:"";position:absolute;top:-80px;right:-80px;
+  width:220px;height:220px;
+  background:radial-gradient(circle,rgba(26,111,255,.13),transparent 70%);
+  pointer-events:none;
+}
+
+/* =============================================
+   SCREEN SYSTEM
+============================================= */
+.screen{display:none;}
+.screen.active{display:block;animation:fadeUp .38s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* =============================================
+   WELCOME SCREEN
+============================================= */
+.welcome{text-align:center;padding:clamp(10px,3vw,20px) 0;}
+.pill{
+  display:inline-block;font-size:.73rem;font-family:'Rajdhani',sans-serif;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;color:var(--gold);
+  border:1px solid rgba(244,180,0,.3);background:rgba(244,180,0,.06);
+  border-radius:30px;padding:5px 16px;margin-bottom:18px;
+}
+.welcome h1{
+  font-size:clamp(1.6rem,5vw,2.5rem);
+  color:#fff;line-height:1.2;margin-bottom:14px;
+}
+.welcome h1 .hl{color:var(--blue);}
+.welcome .lead{
+  color:var(--muted);font-size:clamp(.92rem,2.5vw,1.02rem);
+  max-width:500px;margin:0 auto 28px;line-height:1.65;
+}
+
+/* funnel steps */
+.funnel{
+  display:flex;align-items:center;justify-content:center;
+  gap:0;margin:0 auto 28px;
+  max-width:480px;overflow:hidden;
+}
+.fn-step{flex:1;text-align:center;min-width:0;}
+.fn-dot{
+  width:clamp(32px,7vw,42px);height:clamp(32px,7vw,42px);
+  border-radius:50%;background:rgba(26,111,255,.1);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 6px;font-size:clamp(.85rem,2.5vw,1.1rem);
+}
+.fn-label{
+  font-size:clamp(.62rem,1.8vw,.78rem);color:var(--muted);
+  font-family:'Rajdhani',sans-serif;font-weight:600;letter-spacing:.5px;
+  text-transform:uppercase;line-height:1.2;
+}
+.fn-arr{color:var(--blue);font-size:clamp(.8rem,2vw,1rem);padding:0 2px;margin-top:-16px;flex-shrink:0;}
+
+/* feat row */
+.feats{display:flex;justify-content:center;flex-wrap:wrap;gap:16px;margin-bottom:30px;}
+.feat{flex:1 1 120px;max-width:150px;text-align:center;}
+.feat-ico{
+  width:46px;height:46px;margin:0 auto 8px;border-radius:13px;
+  background:rgba(26,111,255,.1);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;box-shadow:0 0 12px rgba(26,111,255,.18);
+}
+.feat span{font-size:.8rem;color:var(--muted);}
+
+/* =============================================
+   BUTTONS
+============================================= */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  font-family:'Rajdhani',sans-serif;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;
+  font-size:clamp(.82rem,2.2vw,.92rem);
+  padding:clamp(13px,3vw,16px) clamp(20px,5vw,36px);
+  border-radius:var(--radius-sm);
+  transition:transform .14s,box-shadow .14s;
+  text-decoration:none;white-space:nowrap;
+  border:none;cursor:pointer;
+  /* min touch target */
+  min-height:48px;
+}
+.btn:hover{transform:translateY(-2px);}
+.btn:active{transform:translateY(0);}
+.btn-orange{
+  background:linear-gradient(135deg,var(--orange),#ff9a2e);
+  color:#1a0800;box-shadow:0 5px 20px rgba(240,118,0,.32);
+}
+.btn-orange:hover{box-shadow:0 8px 28px rgba(240,118,0,.48);}
+.btn-outline{background:transparent;color:var(--blue);border:1px solid var(--blue);}
+.btn-outline:hover{background:rgba(26,111,255,.1);}
+.btn-ghost{background:rgba(255,255,255,.04);color:var(--text);border:1px solid rgba(255,255,255,.1);}
+.btn-row{
+  display:flex;gap:10px;justify-content:center;
+  flex-wrap:wrap;margin-top:26px;
+}
+/* full-width buttons on small screens */
+@media(max-width:420px){
+  .btn-row{flex-direction:column;align-items:stretch;}
+  .btn-row .btn{width:100%;text-align:center;}
+}
+
+/* =============================================
+   SECTION HEADER
+============================================= */
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+.sec-num{
+  width:38px;height:38px;flex-shrink:0;border-radius:9px;
+  background:rgba(26,111,255,.12);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--blue);font-size:1.05rem;
+}
+.sec-head h2{font-size:clamp(1.15rem,3.5vw,1.4rem);color:#fff;}
+.sec-sub{color:var(--muted);font-size:.88rem;margin-bottom:22px;margin-left:50px;}
+@media(max-width:400px){.sec-sub{margin-left:0;}}
+
+/* =============================================
+   FORM
+============================================= */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-grid .span2{grid-column:1/-1;}
+/* tablet: keep 2 cols */
+@media(max-width:540px){.form-grid{grid-template-columns:1fr;}}
+
+.field label{
+  display:block;font-size:.75rem;color:var(--muted);margin-bottom:5px;
+  text-transform:uppercase;letter-spacing:1px;
+}
+.field input,.field select{
+  width:100%;background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.09);border-radius:var(--radius-sm);
+  padding:13px 14px;color:var(--text);font-size:1rem;font-family:'Barlow',sans-serif;
+  transition:border-color .15s,box-shadow .15s;
+  /* larger touch targets */
+  min-height:48px;
+}
+.field input:focus,.field select:focus{
+  outline:none;border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(26,111,255,.15);
+}
+.field input::placeholder{color:rgba(122,154,191,.5);}
+.field select{
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a9abf' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;
+  padding-right:38px;
+}
+
+/* =============================================
+   PROGRESS BAR
+============================================= */
+.prog-wrap{margin-bottom:26px;}
+.prog-meta{
+  display:flex;justify-content:space-between;
+  font-size:.75rem;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;
+}
+.prog-track{height:5px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden;}
+.prog-fill{
+  height:100%;border-radius:5px;
+  background:linear-gradient(90deg,var(--blue),var(--gold));
+  transition:width .4s ease;
+}
+
+/* =============================================
+   QUESTIONS
+============================================= */
+.q-block{padding:18px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.q-block:last-child{border-bottom:none;padding-bottom:0;}
+.q-text{font-size:clamp(.9rem,2.5vw,1rem);color:var(--text);margin-bottom:12px;font-weight:500;line-height:1.45;}
+.opts{display:flex;gap:8px;flex-wrap:wrap;}
+.opt{
+  flex:1 1 90px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
+  color:var(--muted);padding:12px 10px;border-radius:var(--radius-sm);
+  font-family:'Rajdhani',sans-serif;font-size:.92rem;font-weight:600;
+  letter-spacing:.4px;text-align:center;transition:all .14s;
+  /* touch target */
+  min-height:46px;cursor:pointer;
+}
+.opt:hover{border-color:var(--blue);color:var(--text);}
+.opt.sel-si{background:rgba(26,111,255,.15);border-color:var(--blue);color:#fff;box-shadow:inset 0 0 0 1px var(--blue);}
+.opt.sel-parcial{background:rgba(244,180,0,.12);border-color:var(--gold);color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold);}
+.opt.sel-no{background:rgba(240,118,0,.12);border-color:var(--orange);color:var(--orange);box-shadow:inset 0 0 0 1px var(--orange);}
+
+/* on very small screens make opts vertical */
+@media(max-width:360px){
+  .opts{flex-direction:column;}
+  .opt{flex:none;width:100%;}
+}
+
+/* =============================================
+   RESULTS
+============================================= */
+.res-top{text-align:center;margin-bottom:22px;}
+.res-top h2{font-size:clamp(1.3rem,4vw,1.7rem);color:#fff;margin-bottom:5px;}
+.res-top p{color:var(--muted);font-size:.9rem;}
+
+/* gauge */
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;margin:8px 0 24px;}
+.gauge-svg{width:min(240px,80vw);height:auto;}
+.gauge-score{
+  font-family:'Rajdhani',sans-serif;font-size:clamp(2.4rem,8vw,3.2rem);
+  font-weight:700;color:#fff;line-height:1;margin-top:4px;
+}
+.gauge-score sup{font-size:clamp(.9rem,3vw,1.2rem);color:var(--muted);font-weight:600;}
+.lv-pill{
+  margin-top:12px;padding:6px 20px;border-radius:30px;
+  font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;font-size:clamp(.78rem,2.2vw,.88rem);
+  text-align:center;
+}
+.lv-critical{background:rgba(255,70,70,.12);color:#ff6868;border:1px solid rgba(255,70,70,.3);}
+.lv-basic{background:rgba(240,118,0,.12);color:var(--orange);border:1px solid rgba(240,118,0,.3);}
+.lv-intermediate{background:rgba(244,180,0,.12);color:var(--gold);border:1px solid rgba(244,180,0,.3);}
+.lv-advanced{background:rgba(40,200,150,.12);color:#36e0b0;border:1px solid rgba(40,200,150,.3);}
+.lv-desc{
+  max-width:500px;margin:12px auto 0;
+  color:var(--muted);font-size:clamp(.84rem,2.3vw,.92rem);
+  text-align:center;line-height:1.6;
+}
+
+/* category cards */
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0;}
+@media(max-width:500px){.cat-grid{grid-template-columns:1fr;}}
+.cat-card{
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+  border-radius:13px;padding:16px 18px;
+}
+.cat-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px;}
+.cat-top h4{font-size:clamp(.82rem,2.2vw,.92rem);color:#fff;font-weight:600;line-height:1.3;}
+.cat-pts{
+  font-family:'Rajdhani',sans-serif;font-weight:700;
+  font-size:1.1rem;color:var(--blue);flex-shrink:0;margin-left:8px;
+}
+.cat-bar{height:7px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden;}
+.cat-fill{height:100%;border-radius:5px;transition:width .9s ease;width:0%;}
+.fill-low{background:linear-gradient(90deg,#ff5b5b,var(--orange));}
+.fill-mid{background:linear-gradient(90deg,var(--orange),var(--gold));}
+.fill-hi{background:linear-gradient(90deg,var(--blue),#36e0b0);}
+
+/* recommendations */
+.recs-title{
+  font-family:'Rajdhani',sans-serif;font-size:1.1rem;font-weight:700;
+  color:#fff;margin:24px 0 13px;
+  display:flex;align-items:center;gap:10px;
+}
+.recs-title::before{content:"";width:4px;height:19px;background:var(--orange);border-radius:2px;flex-shrink:0;}
+.rec{
+  background:linear-gradient(135deg,rgba(26,111,255,.07),rgba(244,180,0,.04));
+  border:1px solid var(--border);border-left:4px solid var(--blue);
+  border-radius:12px;padding:14px 18px;margin-bottom:11px;
+}
+.rec h5{
+  font-family:'Rajdhani',sans-serif;font-size:clamp(.92rem,2.5vw,1rem);
+  font-weight:700;color:#fff;margin-bottom:4px;letter-spacing:.4px;
+}
+.rec p{color:var(--muted);font-size:clamp(.82rem,2.2vw,.88rem);line-height:1.6;}
+.rec-ok{border-left-color:#36e0b0;text-align:center;}
+
+/* =============================================
+   CTA FINAL
+============================================= */
+.cta-final{
+  margin-top:36px;
+  background:linear-gradient(135deg,rgba(26,111,255,.12),rgba(240,118,0,.08));
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:clamp(24px,5vw,38px) clamp(18px,5vw,30px);
+  text-align:center;position:relative;overflow:hidden;
+}
+.cta-final::after{
+  content:"";position:absolute;bottom:-50px;left:-50px;
+  width:180px;height:180px;
+  background:radial-gradient(circle,rgba(240,118,0,.1),transparent 70%);
+  pointer-events:none;
+}
+.cta-final h3{font-size:clamp(1.15rem,4vw,1.5rem);color:#fff;margin-bottom:10px;line-height:1.3;}
+.cta-final p{color:var(--muted);margin-bottom:22px;font-size:clamp(.88rem,2.4vw,.96rem);line-height:1.6;}
+
+.david-strip{
+  display:flex;align-items:center;gap:14px;
+  justify-content:center;margin-top:24px;flex-wrap:wrap;
+}
+.david-img{
+  width:48px;height:48px;border-radius:50%;
+  border:2px solid var(--blue);object-fit:cover;
+  box-shadow:0 0 14px rgba(26,111,255,.4);flex-shrink:0;
+}
+.david-info{text-align:left;}
+.david-info strong{display:block;font-size:.93rem;color:#fff;font-family:'Rajdhani',sans-serif;font-weight:700;}
+.david-info span{font-size:.78rem;color:var(--muted);}
+
+/* =============================================
+   FOOTER
+============================================= */
+.site-footer{
+  text-align:center;padding:20px 16px 30px;
+  color:var(--muted);font-size:.78rem;letter-spacing:.5px;
+}
+.site-footer .fb{color:var(--blue);font-weight:700;}
+
+/* =============================================
+   ERROR MSG
+============================================= */
+.err{color:#ff6868;font-size:.82rem;margin-top:10px;text-align:center;display:none;}
+.err.show{display:block;}
+
+/* =============================================
+   PRINT / PDF
+============================================= */
+#printArea{display:none;}
+@media print{
+  body *{visibility:hidden;}
+  #printArea,#printArea *{visibility:visible;}
+  #printArea{
+    display:block;position:absolute;top:0;left:0;width:100%;
+    background:#fff;color:#030e1f;padding:28px;
+    font-family:Arial,Helvetica,sans-serif;font-size:14px;
+  }
+  .ph{display:flex;align-items:center;gap:14px;border-bottom:3px solid #1a6fff;padding-bottom:14px;margin-bottom:16px;}
+  .ph-logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#1a6fff,#0a3a99);flex-shrink:0;}
+  .ph h1{color:#030e1f;font-family:Arial,sans-serif;font-size:1.3rem;}
+  .ph p{font-size:.85rem;color:#555;}
+  .pm{font-size:.9rem;margin-bottom:12px;line-height:1.7;}
+  .pm strong{color:#1a6fff;}
+  .ps{text-align:center;font-size:1.8rem;font-weight:bold;color:#1a6fff;margin:12px 0 4px;}
+  .plv{text-align:center;font-weight:bold;color:#f07600;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+  .psec{margin-top:16px;}
+  .psec h3{border-left:4px solid #f07600;padding-left:10px;color:#030e1f;margin-bottom:8px;font-family:Arial,sans-serif;}
+  .pc{display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:6px 0;font-size:.9rem;}
+  .prec{margin-bottom:9px;padding:9px 12px;background:#f4f7fc;border-radius:6px;font-size:.87rem;line-height:1.5;}
+  .prec strong{color:#030e1f;}
+  .pfoot{margin-top:24px;text-align:center;font-size:.75rem;color:#999;border-top:1px solid #eee;padding-top:10px;}
+}
+</style>
+</head>
+<body>
+<canvas id="bgCanvas"></canvas>
+
+<div class="page">
+
+  <!-- ── NAVBAR ── -->
+  <nav class="topnav">
+    <a class="nav-brand" href="https://davidar-svg.github.io/EgestorLab-/" target="_blank" rel="noopener">
+      <img class="nav-logo" src="https://davidar-svg.github.io/EgestorLab-/E-gestorLab_(1).png" alt="e-gestorLab logo">
+      <span class="nav-name">e-<em>gestorLab</em></span>
+    </a>
+    <span class="nav-badge">Evaluación Digital</span>
+  </nav>
+
+  <!-- ── MAIN ── -->
+  <div class="main">
+    <div class="card">
+
+      <!-- SCREEN 0: BIENVENIDA -->
+      <div class="screen active" id="s-welcome">
+        <div class="welcome">
+          <span class="pill">Herramienta Gratuita · eGestorLab</span>
+          <h1>Evaluación de <span class="hl">Infraestructura Comercial Digital</span></h1>
+          <p class="lead">Descubre qué está limitando el crecimiento de tu negocio y recibe recomendaciones para mejorar tu infraestructura comercial.</p>
+
+          <div class="funnel">
+            <div class="fn-step"><div class="fn-dot">🎯</div><div class="fn-label">Evalúa</div></div>
+            <div class="fn-arr">→</div>
+            <div class="fn-step"><div class="fn-dot">📊</div><div class="fn-label">Diagnostica</div></div>
+            <div class="fn-arr">→</div>
+            <div class="fn-step"><div class="fn-dot">🚀</div><div class="fn-label">Optimiza</div></div>
+            <div class="fn-arr">→</div>
+            <div class="fn-step"><div class="fn-dot">✅</div><div class="fn-label">Convierte</div></div>
+          </div>
+
+          <div class="feats">
+            <div class="feat"><div class="feat-ico">📋</div><span>4 áreas clave</span></div>
+            <div class="feat"><div class="feat-ico">⚡</div><span>Resultado inmediato</span></div>
+            <div class="feat"><div class="feat-ico">📄</div><span>Informe PDF</span></div>
+          </div>
+
+          <button class="btn btn-orange" onclick="go('s-data')">Comenzar Evaluación →</button>
+        </div>
+      </div>
+
+      <!-- SCREEN 1: DATOS -->
+      <div class="screen" id="s-data">
+        <div class="sec-head"><div class="sec-num">i</div><h2>Datos de tu Negocio</h2></div>
+        <p class="sec-sub">Esta información personalizará tu informe de diagnóstico.</p>
+        <div class="form-grid">
+          <div class="field span2">
+            <label>Nombre de la empresa</label>
+            <input type="text" id="f-empresa" placeholder="Ej: Distribuidora Andes Ltda." autocomplete="organization">
+          </div>
+          <div class="field">
+            <label>Nombre del contacto</label>
+            <input type="text" id="f-contacto" placeholder="Ej: María Pérez" autocomplete="name">
+          </div>
+          <div class="field">
+            <label>Correo electrónico</label>
+            <input type="email" id="f-correo" placeholder="correo@empresa.com" autocomplete="email" inputmode="email">
+          </div>
+          <div class="field">
+            <label>Teléfono</label>
+            <input type="tel" id="f-tel" placeholder="+56 9 1234 5678" autocomplete="tel" inputmode="tel">
+          </div>
+          <div class="field">
+            <label>Rubro</label>
+            <input type="text" id="f-rubro" placeholder="Ej: Retail, Servicios, Construcción…">
+          </div>
+        </div>
+        <p class="err" id="err-data">Por favor completa empresa, contacto y correo.</p>
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="go('s-welcome')">← Volver</button>
+          <button class="btn btn-orange" onclick="next('s-data','s-q1')">Continuar →</button>
+        </div>
+      </div>
+
+      <!-- SCREEN 2: CAPTACIÓN -->
+      <div class="screen" id="s-q1">
+        <div class="prog-wrap">
+          <div class="prog-meta"><span>Sección 1 de 4</span><span>25 %</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:25%"></div></div>
+        </div>
+        <div class="sec-head"><div class="sec-num">1</div><h2>Captación de Clientes</h2></div>
+        <p class="sec-sub">Evalúa cómo tu negocio atrae y recibe nuevos clientes.</p>
+        <div id="qc-captacion"></div>
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="go('s-data')">← Volver</button>
+          <button class="btn btn-orange" onclick="next('s-q1','s-q2')">Continuar →</button>
+        </div>
+      </div>
+
+      <!-- SCREEN 3: GESTIÓN -->
+      <div class="screen" id="s-q2">
+        <div class="prog-wrap">
+          <div class="prog-meta"><span>Sección 2 de 4</span><span>50 %</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:50%"></div></div>
+        </div>
+        <div class="sec-head"><div class="sec-num">2</div><h2>Gestión Comercial</h2></div>
+        <p class="sec-sub">Evalúa cómo administras clientes, oportunidades y cotizaciones.</p>
+        <div id="qc-gestion"></div>
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="go('s-q1')">← Volver</button>
+          <button class="btn btn-orange" onclick="next('s-q2','s-q3')">Continuar →</button>
+        </div>
+      </div>
+
+      <!-- SCREEN 4: AUTOMATIZACIÓN -->
+      <div class="screen" id="s-q3">
+        <div class="prog-wrap">
+          <div class="prog-meta"><span>Sección 3 de 4</span><span>75 %</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:75%"></div></div>
+        </div>
+        <div class="sec-head"><div class="sec-num">3</div><h2>Automatización</h2></div>
+        <p class="sec-sub">Evalúa qué tan automatizados están tus procesos.</p>
+        <div id="qc-auto"></div>
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="go('s-q2')">← Volver</button>
+          <button class="btn btn-orange" onclick="next('s-q3','s-q4')">Continuar →</button>
+        </div>
+      </div>
+
+      <!-- SCREEN 5: PRESENCIA -->
+      <div class="screen" id="s-q4">
+        <div class="prog-wrap">
+          <div class="prog-meta"><span>Sección 4 de 4</span><span>100 %</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:100%"></div></div>
+        </div>
+        <div class="sec-head"><div class="sec-num">4</div><h2>Presencia Digital</h2></div>
+        <p class="sec-sub">Evalúa tu visibilidad y actividad en canales digitales.</p>
+        <div id="qc-presencia"></div>
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="go('s-q3')">← Volver</button>
+          <button class="btn btn-orange" onclick="next('s-q4','s-results')">Ver Resultados →</button>
+        </div>
+      </div>
+
+      <!-- SCREEN 6: RESULTADOS -->
+      <div class="screen" id="s-results">
+        <div class="res-top">
+          <h2>Resultado de tu Diagnóstico</h2>
+          <p id="res-company">Informe generado para tu empresa</p>
+        </div>
+
+        <div class="gauge-wrap">
+          <svg class="gauge-svg" viewBox="0 0 240 135" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 20 120 A 100 100 0 0 1 220 120" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="18" stroke-linecap="round"/>
+            <path id="gArc" d="M 20 120 A 100 100 0 0 1 220 120" fill="none" stroke="#1a6fff" stroke-width="18" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314"/>
+          </svg>
+          <div class="gauge-score" id="gScore">–<sup>/100</sup></div>
+          <div class="lv-pill" id="gPill">Calculando…</div>
+          <p class="lv-desc" id="gDesc"></p>
+        </div>
+
+        <div class="cat-grid" id="catGrid"></div>
+        <div id="recsArea"></div>
+
+        <div class="btn-row">
+          <button class="btn btn-outline" onclick="dlPDF()">⬇ Descargar PDF</button>
+          <button class="btn btn-ghost" onclick="restart()">↺ Nuevo diagnóstico</button>
+        </div>
+
+        <div class="cta-final">
+          <h3>¿Quieres mejorar tu infraestructura comercial?</h3>
+          <p>Nuestro equipo diseña la solución digital a la medida de tu negocio: estructura, conversión y resultados medibles.</p>
+          <a class="btn btn-orange"
+             href="https://wa.me/56932383163?text=Hola%20David%2C%20acabo%20de%20realizar%20el%20diagn%C3%B3stico%20de%20eGestorLab%20y%20quiero%20mejorar%20mi%20infraestructura%20comercial."
+             target="_blank" rel="noopener">
+            SOLICITAR DIAGNÓSTICO PROFESIONAL →
+          </a>
+          <div class="david-strip">
+            <img class="david-img"
+                 src="https://davidar-svg.github.io/EgestorLab-/eGestorDavid.png"
+                 alt="David Albornoz">
+            <div class="david-info">
+              <strong>David Albornoz</strong>
+              <span>Fundador · e-gestorLab · +56 9 3238 3163</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /card -->
+  </div><!-- /main -->
+
+  <footer class="site-footer">
+    <span class="fb">e-gestorLab</span> · Infraestructura Digital Comercial para Empresas · Chile
+  </footer>
+
+</div><!-- /page -->
+
+<!-- PRINT AREA -->
+<div id="printArea">
+  <div class="ph">
+    <div class="ph-logo"></div>
+    <div>
+      <h1>e-gestorLab</h1>
+      <p>Evaluación de Infraestructura Comercial Digital</p>
+    </div>
+  </div>
+  <div class="pm">
+    <div><strong>Empresa:</strong> <span id="p-empresa"></span></div>
+    <div><strong>Contacto:</strong> <span id="p-contacto"></span></div>
+    <div><strong>Correo:</strong> <span id="p-correo"></span></div>
+    <div><strong>Teléfono:</strong> <span id="p-tel"></span></div>
+    <div><strong>Rubro:</strong> <span id="p-rubro"></span></div>
+    <div><strong>Fecha:</strong> <span id="p-fecha"></span></div>
+  </div>
+  <div class="ps">Puntaje General: <span id="p-score"></span>/100</div>
+  <div class="plv" id="p-level"></div>
+  <p id="p-ldesc" style="text-align:center;margin-bottom:8px;font-size:.88rem;color:#555;"></p>
+  <div class="psec"><h3>Resultados por Categoría</h3><div id="p-cats"></div></div>
+  <div class="psec"><h3>Diagnóstico</h3><p id="p-diag"></p></div>
+  <div class="psec"><h3>Recomendaciones</h3><div id="p-recs"></div></div>
+  <div class="pfoot">e-gestorLab · egestorlabcontact@gmail.com · +56 9 3238 3163 · Informe generado automáticamente</div>
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   ENVÍO DE CORREOS (Web3Forms)
+   ----------------------------------------
+   1) Crea una cuenta gratis en https://web3forms.com
+   2) Pulsa "Create Access Key" e ingresa el correo donde
+      quieres recibir los datos (ej: egestorlabcontact@gmail.com)
+   3) Te llegará una Access Key por correo. Pégala abajo,
+      reemplazando 'TU_ACCESS_KEY_AQUI'.
+   Sin este paso, el formulario sigue funcionando con
+   normalidad, pero NO se enviará ningún correo.
+══════════════════════════════════════ */
+const WEB3FORMS_ACCESS_KEY='TU_ACCESS_KEY_AQUI';
+let dataEmailSent=false;
+
+async function enviarCorreo(payload){
+  if(!WEB3FORMS_ACCESS_KEY||WEB3FORMS_ACCESS_KEY==='TU_ACCESS_KEY_AQUI'){
+    console.warn('[eGestorLab] Configura WEB3FORMS_ACCESS_KEY para activar el envío de correos.');
+    return;
+  }
+  try{
+    await fetch('https://api.web3forms.com/submit',{
+      method:'POST',
+      headers:{'Content-Type':'application/json',Accept:'application/json'},
+      body:JSON.stringify(Object.assign({access_key:WEB3FORMS_ACCESS_KEY},payload))
+    });
+  }catch(err){
+    console.error('[eGestorLab] Error al enviar correo:',err);
+  }
+}
+
+/* Se envía al pulsar "Continuar →" en Datos del Negocio */
+function enviarDatosNegocio(){
+  if(dataEmailSent) return;
+  dataEmailSent=true;
+  const empresa=document.getElementById('f-empresa').value.trim();
+  const contacto=document.getElementById('f-contacto').value.trim();
+  const correo=document.getElementById('f-correo').value.trim();
+  const tel=document.getElementById('f-tel').value.trim();
+  const rubro=document.getElementById('f-rubro').value.trim();
+  enviarCorreo({
+    subject:'Nuevo registro en Diagnóstico - '+(empresa||'Sin nombre'),
+    from_name:'Diagnóstico eGestorLab',
+    email:correo,
+    Etapa:'Datos de contacto capturados (inicia evaluación)',
+    Empresa:empresa,
+    Contacto:contacto,
+    Correo:correo,
+    Telefono:tel||'No indicado',
+    Rubro:rubro||'No indicado'
+  });
+}
+
+/* Se envía al finalizar la evaluación (pantalla de resultados) */
+function enviarResultados(d){
+  enviarCorreo({
+    subject:'Resultado del diagnóstico - '+(d.biz.empresa||'Sin nombre')+' ('+d.total+'/100)',
+    from_name:'Diagnóstico eGestorLab',
+    email:d.biz.correo,
+    Etapa:'Evaluación completada',
+    Empresa:d.biz.empresa,
+    Contacto:d.biz.contacto,
+    Correo:d.biz.correo,
+    Telefono:d.biz.tel||'No indicado',
+    Rubro:d.biz.rubro||'No indicado',
+    Puntaje_Total:d.total+'/100',
+    Nivel:d.lv.t,
+    Captacion_Clientes:d.sc.captacion+'/100',
+    Gestion_Comercial:d.sc.gestion+'/100',
+    Automatizacion:d.sc.auto+'/100',
+    Presencia_Digital:d.sc.presencia+'/100',
+    Recomendaciones:d.recs.length?d.recs.map(r=>r.t+': '+r.d).join(' | '):'Sin recomendaciones críticas (infraestructura bien estructurada)'
+  });
+}
+
+/* ══════════════════════════════════════
+   CANVAS BACKGROUND (circuit nodes)
+══════════════════════════════════════ */
+(function(){
+  const cv=document.getElementById('bgCanvas'),ctx=cv.getContext('2d');
+  let W,H,nodes=[];
+  function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;init();}
+  function init(){
+    nodes=[];
+    const n=Math.min(Math.floor(W*H/20000),60);
+    for(let i=0;i<n;i++) nodes.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.16,vy:(Math.random()-.5)*.16});
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    nodes.forEach(n=>{
+      n.x+=n.vx;n.y+=n.vy;
+      if(n.x<0||n.x>W)n.vx*=-1;
+      if(n.y<0||n.y>H)n.vy*=-1;
+    });
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        const dx=nodes[i].x-nodes[j].x,dy=nodes[i].y-nodes[j].y,d=Math.hypot(dx,dy);
+        if(d<120){
+          ctx.beginPath();
+          ctx.strokeStyle=`rgba(26,111,255,${.32*(1-d/120)})`;
+          ctx.lineWidth=.55;
+          ctx.moveTo(nodes[i].x,nodes[i].y);
+          ctx.lineTo(nodes[j].x,nodes[j].y);
+          ctx.stroke();
+        }
+      }
+      ctx.beginPath();ctx.arc(nodes[i].x,nodes[i].y,1.4,0,Math.PI*2);
+      ctx.fillStyle='rgba(26,111,255,.5)';ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',resize);
+  resize();draw();
+})();
+
+/* ══════════════════════════════════════
+   DATA MODEL
+══════════════════════════════════════ */
+const CATS={
+  captacion:{label:'Captación de Clientes',cont:'qc-captacion',qs:[
+    '¿Tiene sitio web?',
+    '¿Tiene formularios de contacto?',
+    '¿Recibe solicitudes automáticamente?',
+    '¿Tiene landing pages para campañas?',
+    '¿Utiliza WhatsApp Business?'
+  ]},
+  gestion:{label:'Gestión Comercial',cont:'qc-gestion',qs:[
+    '¿Registra todos los clientes?',
+    '¿Realiza seguimiento de oportunidades?',
+    '¿Utiliza CRM?',
+    '¿Gestiona cotizaciones digitalmente?',
+    '¿Mantiene historial de clientes?'
+  ]},
+  auto:{label:'Automatización',cont:'qc-auto',qs:[
+    '¿Utiliza correos automáticos?',
+    '¿Tiene respuestas automáticas?',
+    '¿Automatiza tareas repetitivas?',
+    '¿Tiene procesos digitales definidos?',
+    '¿Utiliza herramientas de productividad?'
+  ]},
+  presencia:{label:'Presencia Digital',cont:'qc-presencia',qs:[
+    '¿Tiene perfil de Google Business?',
+    '¿Tiene redes sociales activas?',
+    '¿Publica contenido regularmente?',
+    '¿Mide resultados digitales?',
+    '¿Realiza campañas digitales?'
+  ]}
+};
+const OPTS=[{l:'Sí',v:20,c:'sel-si'},{l:'Parcialmente',v:10,c:'sel-parcial'},{l:'No',v:0,c:'sel-no'}];
+const ans={captacion:[null,null,null,null,null],gestion:[null,null,null,null,null],auto:[null,null,null,null,null],presencia:[null,null,null,null,null]};
+const S_CAT={'s-q1':'captacion','s-q2':'gestion','s-q3':'auto','s-q4':'presencia'};
+
+/* render question blocks */
+Object.keys(CATS).forEach(k=>{
+  const cont=document.getElementById(CATS[k].cont);
+  CATS[k].qs.forEach((q,i)=>{
+    const blk=document.createElement('div');blk.className='q-block';
+    const qt=document.createElement('div');qt.className='q-text';qt.textContent=q;blk.appendChild(qt);
+    const row=document.createElement('div');row.className='opts';
+    OPTS.forEach(o=>{
+      const b=document.createElement('button');b.type='button';b.className='opt';b.textContent=o.l;
+      b.addEventListener('click',()=>{
+        ans[k][i]=o.v;
+        row.querySelectorAll('.opt').forEach(x=>x.className='opt');
+        b.classList.add(o.c);
+      });
+      row.appendChild(b);
+    });
+    blk.appendChild(row);cont.appendChild(blk);
+  });
+});
+
+/* ══════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════ */
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  /* scroll card top into view */
+  const card=document.querySelector('.card');
+  if(card) card.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function next(cur,nxt){
+  if(cur==='s-data'){
+    const e=document.getElementById('err-data');
+    const ok=document.getElementById('f-empresa').value.trim()&&
+              document.getElementById('f-contacto').value.trim()&&
+              document.getElementById('f-correo').value.trim();
+    if(!ok){e.classList.add('show');return;}
+    e.classList.remove('show');
+    enviarDatosNegocio();
+  }
+  const ck=S_CAT[cur];
+  if(ck&&ans[ck].some(v=>v===null)){
+    alert('Por favor responde todas las preguntas antes de continuar.');return;
+  }
+  if(nxt==='s-results') buildResults();
+  go(nxt);
+}
+
+function restart(){
+  Object.keys(ans).forEach(k=>ans[k]=ans[k].map(()=>null));
+  document.querySelectorAll('.opt').forEach(b=>b.className='opt');
+  dataEmailSent=false;
+  go('s-welcome');
+}
+
+/* ══════════════════════════════════════
+   SCORE & RESULTS
+══════════════════════════════════════ */
+let last=null;
+
+function buildResults(){
+  const sc={};
+  Object.keys(CATS).forEach(k=>{
+    sc[k]=Math.round(ans[k].reduce((a,b)=>a+b,0)/ans[k].length);
+  });
+  const total=Math.round((sc.captacion+sc.gestion+sc.auto+sc.presencia)/4);
+  const lv=getLevel(total);
+  const recs=getRecs(sc);
+  last={sc,total,lv,recs,biz:{
+    empresa:document.getElementById('f-empresa').value.trim(),
+    contacto:document.getElementById('f-contacto').value.trim(),
+    correo:document.getElementById('f-correo').value.trim(),
+    tel:document.getElementById('f-tel').value.trim(),
+    rubro:document.getElementById('f-rubro').value.trim()
+  }};
+  render(last);
+  fillPrint(last);
+  enviarResultados(last);
+}
+
+function getLevel(s){
+  if(s<=25) return{t:'Infraestructura Comercial Crítica',cls:'lv-critical',d:'Tu negocio presenta brechas significativas. Existe un alto riesgo de pérdida de oportunidades y baja escalabilidad.',col:'#ff6868'};
+  if(s<=50) return{t:'Infraestructura Comercial Básica',cls:'lv-basic',d:'Cuentas con elementos iniciales pero falta estructura, automatización y consistencia para escalar eficientemente.',col:'#f07600'};
+  if(s<=75) return{t:'Infraestructura Comercial Intermedia',cls:'lv-intermediate',d:'Tienes una base sólida. Con optimizaciones específicas puedes aumentar significativamente tu conversión comercial.',col:'#f4b400'};
+  return{t:'Infraestructura Comercial Avanzada',cls:'lv-advanced',d:'Tu negocio cuenta con una infraestructura madura. El foco debe estar en optimización continua y escalabilidad.',col:'#36e0b0'};
+}
+
+function getRecs(s){
+  const T=60,r=[];
+  if(s.captacion<T) r.push({t:'Sistema de Captación de Clientes',d:'Implementa formularios inteligentes, landing pages y WhatsApp Business para capturar más prospectos cualificados.'});
+  if(s.gestion<T)   r.push({t:'CRM Comercial',d:'Centraliza clientes, oportunidades y cotizaciones en un CRM para dar seguimiento ordenado a cada etapa de venta.'});
+  if(s.auto<T)      r.push({t:'Automatización de Procesos',d:'Automatiza correos, respuestas y tareas repetitivas para reducir tiempos y mejorar la experiencia de tus clientes.'});
+  if(s.presencia<T) r.push({t:'Landing Pages y Estrategia Digital',d:'Fortalece tu presencia en Google Business, redes sociales y campañas con páginas diseñadas para resultados medibles.'});
+  return r;
+}
+
+function render(d){
+  document.getElementById('res-company').textContent=
+    d.biz.empresa?`Informe para ${d.biz.empresa}`:'Informe generado';
+
+  /* gauge */
+  const arc=document.getElementById('gArc');
+  arc.setAttribute('stroke',d.lv.col);
+  setTimeout(()=>{arc.style.transition='stroke-dashoffset 1.1s ease';arc.setAttribute('stroke-dashoffset',314-(314*d.total/100));},60);
+  document.getElementById('gScore').innerHTML=`${d.total}<sup>/100</sup>`;
+  const pill=document.getElementById('gPill');
+  pill.textContent=d.lv.t;pill.className='lv-pill '+d.lv.cls;
+  document.getElementById('gDesc').textContent=d.lv.d;
+
+  /* category cards */
+  const cg=document.getElementById('catGrid');cg.innerHTML='';
+  Object.keys(CATS).forEach(k=>{
+    const v=d.sc[k],bc=v<=33?'fill-low':v<=66?'fill-mid':'fill-hi';
+    const div=document.createElement('div');div.className='cat-card';
+    div.innerHTML=`<div class="cat-top"><h4>${CATS[k].label}</h4><div class="cat-pts">${v}/100</div></div><div class="cat-bar"><div class="cat-fill ${bc}"></div></div>`;
+    cg.appendChild(div);
+    setTimeout(()=>div.querySelector('.cat-fill').style.width=v+'%',80);
+  });
+
+  /* recommendations */
+  const ra=document.getElementById('recsArea');ra.innerHTML='';
+  const rh=document.createElement('div');rh.className='recs-title';rh.textContent='Recomendaciones para tu negocio';ra.appendChild(rh);
+  if(!d.recs.length){
+    const el=document.createElement('div');el.className='rec rec-ok';
+    el.innerHTML='<h5>¡Excelente trabajo!</h5><p>Tu infraestructura está bien estructurada en todas las áreas. Te recomendamos enfocarte en optimización continua y escalabilidad.</p>';
+    ra.appendChild(el);
+  }else{
+    d.recs.forEach(r=>{
+      const el=document.createElement('div');el.className='rec';
+      el.innerHTML=`<h5>${r.t}</h5><p>${r.d}</p>`;ra.appendChild(el);
+    });
+  }
+}
+
+/* ══════════════════════════════════════
+   PRINT / PDF
+══════════════════════════════════════ */
+function fillPrint(d){
+  const set=(id,v)=>document.getElementById(id).textContent=v;
+  set('p-empresa',d.biz.empresa||'-');
+  set('p-contacto',d.biz.contacto||'-');
+  set('p-correo',d.biz.correo||'-');
+  set('p-tel',d.biz.tel||'-');
+  set('p-rubro',d.biz.rubro||'-');
+  set('p-fecha',new Date().toLocaleDateString('es-CL',{year:'numeric',month:'long',day:'numeric'}));
+  set('p-score',d.total);
+  set('p-level',d.lv.t);
+  set('p-ldesc',d.lv.d);
+  const cats=document.getElementById('p-cats');cats.innerHTML='';
+  Object.keys(CATS).forEach(k=>{
+    const row=document.createElement('div');row.className='pc';
+    row.innerHTML=`<span>${CATS[k].label}</span><strong>${d.sc[k]}/100</strong>`;
+    cats.appendChild(row);
+  });
+  set('p-diag',`Con un puntaje de ${d.total}/100, la empresa ${d.biz.empresa||''} se encuentra en nivel "${d.lv.t}". ${d.lv.d}`);
+  const pr=document.getElementById('p-recs');pr.innerHTML='';
+  if(!d.recs.length){
+    pr.innerHTML='<div class="prec">Sin recomendaciones críticas. La infraestructura está bien estructurada en todas las áreas.</div>';
+  }else{
+    d.recs.forEach(r=>{const el=document.createElement('div');el.className='prec';el.innerHTML=`<strong>${r.t}:</strong> ${r.d}`;pr.appendChild(el);});
+  }
+}
+
+function dlPDF(){
+  if(!last){alert('Completa el Evaluación primero.');return;}
+  document.title='Diagnostico_eGestorLab_'+(last.biz.empresa||'Empresa').replace(/\s+/g,'_');
+  window.print();
+}
+</script>
+</body>
+</html>
