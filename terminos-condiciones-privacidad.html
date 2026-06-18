@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Términos de Uso y Política de Privacidad | e-gestorLab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* =============================================
+   VARIABLES & RESET
+============================================= */
+:root{
+  --bg:#030e1f;
+  --blue:#1a6fff;
+  --orange:#f07600;
+  --gold:#f4b400;
+  --text:#e8edf5;
+  --muted:#7a9abf;
+  --border:rgba(26,111,255,0.18);
+  --card-bg:linear-gradient(160deg,rgba(10,24,48,.92) 0%,rgba(7,18,38,.97) 100%);
+  --radius:16px;
+  --radius-sm:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Barlow',Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  font-size:16px;
+}
+h1,h2,h3{font-family:'Rajdhani',sans-serif;font-weight:700;}
+a{color:var(--blue);}
+button{cursor:pointer;font-family:inherit;border:none;background:none;}
+
+/* =============================================
+   CANVAS BACKGROUND
+============================================= */
+#bgCanvas{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  z-index:0;pointer-events:none;opacity:.3;
+}
+
+/* =============================================
+   LAYOUT SHELL
+============================================= */
+.page{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh;}
+
+/* =============================================
+   NAV
+============================================= */
+.topnav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;
+  background:rgba(3,14,31,.88);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:200;
+  flex-wrap:nowrap;gap:8px;
+}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
+.nav-logo{height:34px;filter:drop-shadow(0 0 8px rgba(26,111,255,.55));}
+.nav-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.05rem;color:#fff;white-space:nowrap;}
+.nav-name em{color:var(--orange);font-style:normal;}
+.nav-badge{
+  font-size:.68rem;font-family:'Rajdhani',sans-serif;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--gold);border:1px solid rgba(244,180,0,.3);
+  background:rgba(244,180,0,.06);border-radius:20px;
+  padding:4px 12px;white-space:nowrap;
+}
+
+/* =============================================
+   MAIN / CARD
+============================================= */
+.main{flex:1;width:100%;max-width:780px;margin:0 auto;padding:28px 16px 60px;}
+.card{
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:clamp(22px,5vw,44px) clamp(18px,5vw,40px);
+  box-shadow:0 0 50px rgba(26,111,255,.1),0 20px 40px rgba(0,0,0,.4);
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:"";position:absolute;top:-80px;right:-80px;
+  width:220px;height:220px;
+  background:radial-gradient(circle,rgba(26,111,255,.13),transparent 70%);
+  pointer-events:none;
+}
+
+/* =============================================
+   HERO / INTRO
+============================================= */
+.legal-hero{text-align:center;padding:clamp(4px,2vw,12px) 0 28px;border-bottom:1px solid var(--border);margin-bottom:28px;}
+.pill{
+  display:inline-block;font-size:.73rem;font-family:'Rajdhani',sans-serif;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;color:var(--gold);
+  border:1px solid rgba(244,180,0,.3);background:rgba(244,180,0,.06);
+  border-radius:30px;padding:5px 16px;margin-bottom:16px;
+}
+.legal-hero h1{font-size:clamp(1.45rem,4.5vw,2.05rem);color:#fff;line-height:1.28;margin-bottom:12px;}
+.legal-hero h1 .hl{color:var(--blue);}
+.legal-meta{color:var(--muted);font-size:.82rem;font-family:'Rajdhani',sans-serif;letter-spacing:.4px;}
+.legal-meta strong{color:var(--gold);font-weight:700;}
+
+/* table of contents */
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:30px;}
+.toc a{
+  font-size:.72rem;font-family:'Rajdhani',sans-serif;font-weight:600;letter-spacing:.3px;
+  color:var(--muted);text-decoration:none;
+  border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.03);
+  border-radius:20px;padding:6px 13px;
+  transition:border-color .15s,color .15s,background .15s;
+}
+.toc a:hover,.toc a:focus-visible{color:var(--blue);border-color:var(--blue);background:rgba(26,111,255,.08);outline:none;}
+
+.legal-intro{
+  color:var(--muted);font-size:.95rem;line-height:1.75;
+  margin-bottom:32px;padding-bottom:28px;border-bottom:1px solid var(--border);
+}
+.legal-intro strong{color:#fff;}
+
+/* =============================================
+   SECTION HEADER (reused pattern)
+============================================= */
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.sec-num{
+  width:36px;height:36px;flex-shrink:0;border-radius:9px;
+  background:rgba(26,111,255,.12);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--blue);font-size:1rem;
+}
+.sec-head h2{font-size:clamp(1.05rem,3.2vw,1.22rem);color:#fff;}
+
+.legal-sec{margin-bottom:30px;scroll-margin-top:88px;}
+.legal-sec:last-of-type{margin-bottom:0;}
+.legal-sec p{color:var(--muted);font-size:.92rem;line-height:1.78;margin:0 0 13px;margin-left:48px;}
+.legal-sec p:last-child{margin-bottom:0;}
+.legal-sec ul{margin:0 0 13px;margin-left:48px;padding-left:18px;}
+.legal-sec li{color:var(--muted);font-size:.92rem;line-height:1.78;margin-bottom:6px;}
+.legal-sec li::marker{color:var(--blue);}
+@media(max-width:460px){.legal-sec p,.legal-sec ul{margin-left:0;}}
+
+/* highlighted consent box (mirrors the form checkbox styling) */
+.legal-highlight{
+  margin-left:48px;background:rgba(244,180,0,.05);
+  border:1px solid rgba(244,180,0,.22);border-left:3px solid var(--gold);
+  border-radius:var(--radius-sm);padding:16px 18px;
+}
+.legal-highlight p{margin-left:0;color:var(--text);}
+.legal-highlight p:last-child{color:var(--muted);font-size:.82rem;margin-top:4px;}
+.legal-highlight a{color:var(--gold);text-decoration:underline;}
+@media(max-width:460px){.legal-highlight{margin-left:0;}}
+
+/* =============================================
+   BUTTONS
+============================================= */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;
+  font-size:clamp(.8rem,2.2vw,.88rem);
+  padding:clamp(12px,3vw,15px) clamp(18px,5vw,30px);
+  border-radius:var(--radius-sm);
+  transition:transform .14s,box-shadow .14s;
+  text-decoration:none;white-space:nowrap;border:none;cursor:pointer;min-height:46px;
+}
+.btn:hover{transform:translateY(-2px);}
+.btn:active{transform:translateY(0);}
+.btn-orange{background:linear-gradient(135deg,var(--orange),#ff9a2e);color:#1a0800;box-shadow:0 5px 20px rgba(240,118,0,.32);}
+.btn-orange:hover{box-shadow:0 8px 28px rgba(240,118,0,.48);}
+.btn-ghost{background:rgba(255,255,255,.04);color:var(--text);border:1px solid rgba(255,255,255,.1);}
+.btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:34px;}
+@media(max-width:420px){.btn-row{flex-direction:column;align-items:stretch;}.btn-row .btn{width:100%;}}
+
+/* =============================================
+   FOOTER
+============================================= */
+.site-footer{text-align:center;padding:20px 16px 30px;color:var(--muted);font-size:.78rem;letter-spacing:.5px;}
+.site-footer .fb{color:var(--blue);font-weight:700;}
+.site-footer a{color:var(--muted);text-decoration:underline;}
+
+/* =============================================
+   BACK TO TOP
+============================================= */
+.back-to-top{
+  position:fixed;right:18px;bottom:18px;z-index:150;
+  width:46px;height:46px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue),#0a3a99);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:1.15rem;
+  box-shadow:0 6px 20px rgba(26,111,255,.4);
+  opacity:0;pointer-events:none;transform:translateY(8px);
+  transition:opacity .25s,transform .25s;
+}
+.back-to-top.show{opacity:1;pointer-events:auto;transform:translateY(0);}
+.back-to-top:hover{box-shadow:0 8px 26px rgba(26,111,255,.55);}
+
+/* =============================================
+   PRINT
+============================================= */
+@media print{
+  #bgCanvas,.topnav,.toc,.btn-row,.site-footer,.back-to-top{display:none!important;}
+  body{background:#fff;color:#111;}
+  .card{background:#fff;border:none;box-shadow:none;padding:0;}
+  .legal-hero,.legal-intro{border-color:#ddd;}
+  .legal-hero h1{color:#111;}
+  .legal-sec p,.legal-sec li,.legal-intro,.legal-meta{color:#222;}
+  .sec-head h2{color:#111;}
+  .sec-num{background:#f1f1f1;border-color:#ccc;color:#1a6fff;}
+  .legal-highlight{background:#fff8e6;border-color:#e8d28a;}
+  .legal-highlight p{color:#222;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<div class="page">
+
+  <!-- ── NAVBAR ── -->
+  <nav class="topnav">
+    <a class="nav-brand" href="https://davidar-svg.github.io/EgestorLab-/" target="_blank" rel="noopener">
+      <img class="nav-logo" src="https://davidar-svg.github.io/EgestorLab-/E-gestorLab_(1).png" alt="e-gestorLab logo">
+      <span class="nav-name">e-<em>gestorLab</em></span>
+    </a>
+    <span class="nav-badge">Legal</span>
+  </nav>
+
+  <!-- ── MAIN ── -->
+  <div class="main">
+    <div class="card">
+
+      <div class="legal-hero">
+        <span class="pill">Documento Legal · eGestorLab</span>
+        <h1>Términos de Uso, Condiciones <span class="hl">y Política de Privacidad</span></h1>
+        <p class="legal-meta">Última actualización: <strong>Junio 2026</strong></p>
+      </div>
+
+      <nav class="toc" aria-label="Índice de contenidos">
+        <a href="#s1">1. Finalidad</a>
+        <a href="#s2">2. Información Recopilada</a>
+        <a href="#s3">3. Uso de la Información</a>
+        <a href="#s4">4. Almacenamiento</a>
+        <a href="#s5">5. Comunicaciones</a>
+        <a href="#s6">6. Propiedad Intelectual</a>
+        <a href="#s7">7. Responsabilidad</a>
+        <a href="#s8">8. Derechos del Usuario</a>
+        <a href="#s9">9. Modificaciones</a>
+        <a href="#s10">10. Consentimiento</a>
+      </nav>
+
+      <p class="legal-intro">
+        El presente sitio web es operado por <strong>eGestorLab</strong>. Al utilizar este sitio,
+        completar formularios o solicitar evaluaciones, diagnósticos o servicios, usted acepta
+        los términos y condiciones descritos a continuación.
+      </p>
+
+      <article>
+
+        <section class="legal-sec" id="s1">
+          <div class="sec-head"><div class="sec-num">1</div><h2>Finalidad del Servicio</h2></div>
+          <p>eGestorLab proporciona herramientas de diagnóstico, evaluación, análisis y asesoría relacionadas con infraestructura comercial, digitalización de procesos, automatización, presencia digital, captación de clientes y gestión comercial.</p>
+          <p>Los resultados entregados por nuestras evaluaciones tienen carácter informativo y orientativo, y no constituyen asesoría legal, tributaria, financiera ni garantía de resultados comerciales.</p>
+        </section>
+
+        <section class="legal-sec" id="s2">
+          <div class="sec-head"><div class="sec-num">2</div><h2>Información Recopilada</h2></div>
+          <p>Al completar nuestros formularios, podremos recopilar información proporcionada voluntariamente por el usuario, incluyendo:</p>
+          <ul>
+            <li>Nombre y apellido.</li>
+            <li>Correo electrónico.</li>
+            <li>Número telefónico o WhatsApp.</li>
+            <li>Nombre de empresa o emprendimiento.</li>
+            <li>Rubro o actividad económica.</li>
+            <li>Respuestas entregadas en diagnósticos y evaluaciones.</li>
+          </ul>
+        </section>
+
+        <section class="legal-sec" id="s3">
+          <div class="sec-head"><div class="sec-num">3</div><h2>Uso de la Información</h2></div>
+          <p>La información recopilada podrá ser utilizada exclusivamente para:</p>
+          <ul>
+            <li>Generar informes y diagnósticos solicitados por el usuario.</li>
+            <li>Contactar al usuario respecto de su evaluación.</li>
+            <li>Enviar propuestas comerciales relacionadas con los servicios de eGestorLab.</li>
+            <li>Mejorar nuestros productos, servicios y herramientas digitales.</li>
+            <li>Realizar análisis estadísticos internos.</li>
+          </ul>
+          <p>eGestorLab no venderá, arrendará ni cederá datos personales a terceros para fines comerciales ajenos a la prestación de sus servicios.</p>
+        </section>
+
+        <section class="legal-sec" id="s4">
+          <div class="sec-head"><div class="sec-num">4</div><h2>Almacenamiento y Seguridad</h2></div>
+          <p>Adoptamos medidas razonables para proteger la información recopilada frente a accesos no autorizados, pérdida, alteración o divulgación.</p>
+          <p>No obstante, debido a la naturaleza de Internet, ningún sistema puede garantizar una seguridad absoluta, por lo que el usuario reconoce y acepta dicho riesgo.</p>
+        </section>
+
+        <section class="legal-sec" id="s5">
+          <div class="sec-head"><div class="sec-num">5</div><h2>Comunicaciones Comerciales</h2></div>
+          <p>Al completar voluntariamente cualquiera de nuestros formularios, el usuario autoriza a eGestorLab a establecer contacto mediante correo electrónico, llamada telefónica o mensajería instantánea con el fin de:</p>
+          <ul>
+            <li>Entregar resultados de diagnósticos.</li>
+            <li>Responder consultas.</li>
+            <li>Presentar propuestas comerciales.</li>
+            <li>Informar sobre nuevos servicios o contenidos relacionados.</li>
+          </ul>
+          <p>El usuario podrá solicitar en cualquier momento dejar de recibir comunicaciones comerciales.</p>
+        </section>
+
+        <section class="legal-sec" id="s6">
+          <div class="sec-head"><div class="sec-num">6</div><h2>Propiedad Intelectual</h2></div>
+          <p>Los contenidos, metodologías, diagnósticos, diseños, textos, gráficos, herramientas, documentos y recursos disponibles en este sitio son propiedad de eGestorLab o de sus respectivos titulares, encontrándose protegidos por la legislación vigente.</p>
+          <p>Queda prohibida su reproducción, distribución o utilización con fines comerciales sin autorización previa y por escrito.</p>
+        </section>
+
+        <section class="legal-sec" id="s7">
+          <div class="sec-head"><div class="sec-num">7</div><h2>Limitación de Responsabilidad</h2></div>
+          <p>eGestorLab no garantiza resultados específicos derivados de la implementación de recomendaciones, estrategias o herramientas sugeridas en sus diagnósticos o servicios.</p>
+          <p>Las decisiones comerciales adoptadas por el usuario son de su exclusiva responsabilidad.</p>
+        </section>
+
+        <section class="legal-sec" id="s8">
+          <div class="sec-head"><div class="sec-num">8</div><h2>Derechos del Usuario</h2></div>
+          <p>El usuario podrá solicitar el acceso, rectificación, actualización o eliminación de sus datos personales mediante contacto directo con eGestorLab a través de los canales oficiales publicados en este sitio.</p>
+        </section>
+
+        <section class="legal-sec" id="s9">
+          <div class="sec-head"><div class="sec-num">9</div><h2>Modificaciones</h2></div>
+          <p>eGestorLab podrá actualizar los presentes términos y políticas cuando sea necesario para cumplir con cambios normativos, mejoras de servicio o nuevas funcionalidades. La versión publicada en este sitio será la vigente en cada momento.</p>
+        </section>
+
+        <section class="legal-sec" id="s10">
+          <div class="sec-head"><div class="sec-num">10</div><h2>Consentimiento</h2></div>
+          <div class="legal-highlight">
+            <p>Al enviar un formulario, solicitar un diagnóstico o utilizar este sitio web, el usuario declara haber leído y aceptado los presentes Términos de Uso, Condiciones y Política de Privacidad.</p>
+            <p>¿Tienes dudas sobre estos términos? Escríbenos a <a href="mailto:egestorlabcontact@gmail.com">egestorlabcontact@gmail.com</a>.</p>
+          </div>
+        </section>
+
+      </article>
+
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="window.print()">🖨 Imprimir / Guardar como PDF</button>
+        <a class="btn btn-orange" href="https://davidar-svg.github.io/EgestorLab-/">← Volver al sitio</a>
+      </div>
+
+    </div><!-- /card -->
+  </div><!-- /main -->
+
+  <footer class="site-footer">
+    <span class="fb">e-gestorLab</span> · <a href="mailto:egestorlabcontact@gmail.com">egestorlabcontact@gmail.com</a> · Infraestructura Digital Comercial para Empresas · Chile
+  </footer>
+
+</div><!-- /page -->
+
+<button class="back-to-top" id="btt" aria-label="Volver arriba">↑</button>
+
+<script>
+/* ══════════════════════════════════════
+   CANVAS BACKGROUND (circuit nodes)
+══════════════════════════════════════ */
+(function(){
+  const cv=document.getElementById('bgCanvas'),ctx=cv.getContext('2d');
+  let W,H,nodes=[];
+  function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;init();}
+  function init(){
+    nodes=[];
+    const n=Math.min(Math.floor(W*H/20000),60);
+    for(let i=0;i<n;i++) nodes.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.16,vy:(Math.random()-.5)*.16});
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    nodes.forEach(n=>{
+      n.x+=n.vx;n.y+=n.vy;
+      if(n.x<0||n.x>W)n.vx*=-1;
+      if(n.y<0||n.y>H)n.vy*=-1;
+    });
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        const dx=nodes[i].x-nodes[j].x,dy=nodes[i].y-nodes[j].y,d=Math.hypot(dx,dy);
+        if(d<120){
+          ctx.beginPath();
+          ctx.strokeStyle=`rgba(26,111,255,${.32*(1-d/120)})`;
+          ctx.lineWidth=.55;
+          ctx.moveTo(nodes[i].x,nodes[i].y);
+          ctx.lineTo(nodes[j].x,nodes[j].y);
+          ctx.stroke();
+        }
+      }
+      ctx.beginPath();ctx.arc(nodes[i].x,nodes[i].y,1.4,0,Math.PI*2);
+      ctx.fillStyle='rgba(26,111,255,.5)';ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',resize);
+  resize();draw();
+})();
+
+/* back to top */
+const btt=document.getElementById('btt');
+window.addEventListener('scroll',()=>{btt.classList.toggle('show',window.scrollY>420);});
+btt.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+</script>
+</body>
+</html>
