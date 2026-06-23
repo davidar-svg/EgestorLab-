@@ -968,17 +968,12 @@ const RAR_B64 = "UmFyIRoHAQDLHtRSCwEFBwAGAQHu2IAAOfSyREgCAwuR2AAE9cMCIFuwQWOAAwA
 
 function dlRAR(){
   if(!last){alert('Completa el diagnóstico primero.');return;}
-  const byteChars = atob(RAR_B64);
-  const byteArr = new Uint8Array(byteChars.length);
-  for(let i=0;i<byteChars.length;i++) byteArr[i]=byteChars.charCodeAt(i);
-  const blob = new Blob([byteArr],{type:'application/vnd.rar'});
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = 'Planilla_Control_Ventas_DiagnosticoPlus_eGestorLab.rar';
+  const a = document.createElement('a');
+  a.href = 'https://raw.githubusercontent.com/TU_USUARIO/TU_REPO/main/Planilla_Control_Ventas_eGestorLab.rar';
+  a.download = 'Planilla_Control_Ventas_eGestorLab.rar';
   document.body.appendChild(a);
   a.click();
-  setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},1000);
+  a.remove();
 }
 </script>
 </body>
