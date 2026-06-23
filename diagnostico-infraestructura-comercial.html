@@ -964,12 +964,14 @@ function dlPDF(){
 /* ══════════════════════════════════════
    DESCARGAR RAR
 ══════════════════════════════════════ */
+const DOWNLOAD_URL = "https://github.com/davidar-svg/EgestorLab-/raw/main/Planilla_Control_Ventas_Diagn%C3%B3sticoPlus_eGestorLab.zip";
 
 function dlRAR(){
   if(!last){alert('Completa el diagnóstico primero.');return;}
   const a = document.createElement('a');
-  a.href = 'https://github.com/davidar-svg/EgestorLab-/blob/20fe1fd3a3f0258ac919fade8475789e696302eb/Planilla_Control_Ventas_Diagn%C3%B3sticoPlus_eGestorLab.zip';
-  a.download = 'Planilla_Control_Ventas_eGestorLab.rar';
+  a.href = DOWNLOAD_URL;
+  a.download = 'Planilla_Control_Ventas_DiagnosticoPlus_eGestorLab.zip';
+  a.target = '_blank';
   document.body.appendChild(a);
   a.click();
   a.remove();
