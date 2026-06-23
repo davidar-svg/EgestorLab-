@@ -968,13 +968,13 @@ const RAR_B64 = "UmFyIRoHAQDLHtRSCwEFBwAGAQHu2IAAOfSyREgCAwuR2AAE9cMCIFuwQWOAAwA
 
 function dlRAR(){
   if(!last){alert('Completa el diagnóstico primero.');return;}
-  const byteChars = atob(RAR_B64);
+  const a = document.createElement('a');
   const byteArr = new Uint8Array(byteChars.length);
   for(let i=0;i<byteChars.length;i++) byteArr[i]=byteChars.charCodeAt(i);
   const blob = new Blob([byteArr],{type:'application/x-rar-compressed'});
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  a.href     = url;
+  a.href     = 'Planilla_Control_Ventas_DiagnósticoPlus_eGestorLab.rar.zip'
   a.download = 'Planilla_Control_Ventas_DiagnósticoPlus_eGestorLab.zip';
   document.body.appendChild(a);
   a.click();
