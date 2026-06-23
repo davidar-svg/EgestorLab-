@@ -855,8 +855,11 @@ let last=null;
 
 function buildResults(){
   const sc={};
+  const maxPorPregunta=20;
   Object.keys(CATS).forEach(k=>{
-    sc[k]=Math.round(ans[k].reduce((a,b)=>a+b,0)/ans[k].length);
+    const suma=ans[k].reduce((a,b)=>a+b,0);
+    const maxPosible=ans[k].length*maxPorPregunta;
+    sc[k]=Math.round((suma/maxPosible)*100);
   });
   const total=Math.round((sc.captacion+sc.gestion+sc.auto+sc.presencia)/4);
   const lv=getLevel(total);
