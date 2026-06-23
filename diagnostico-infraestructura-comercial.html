@@ -633,7 +633,7 @@ Tiempo estimado: 5 minutos</h4>
 
         <div class="btn-row">
           <button class="btn btn-outline" onclick="dlPDF()">⬇ Descargar PDF</button>
-          <button class="btn btn-orange" onclick="dlRAR()">📦 Descargar Planilla ZIP</button>
+          <button class="btn btn-orange" onclick="dlRAR()">📦 Descargar Planilla RAR</button>
           <button class="btn btn-ghost" onclick="restart()">↺ Nuevo diagnóstico</button>
         </div>
 
@@ -971,11 +971,11 @@ function dlRAR(){
   const byteChars = atob(RAR_B64);
   const byteArr = new Uint8Array(byteChars.length);
   for(let i=0;i<byteChars.length;i++) byteArr[i]=byteChars.charCodeAt(i);
-  const blob = new Blob([byteArr],{type:'application/zip'});
+  const blob = new Blob([byteArr],{type:'application/vnd.rar'});
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href     = url;
-  a.download = 'Planilla_Control_Ventas_DiagnosticoPlus_eGestorLab.zip';
+  a.download = 'Planilla_Control_Ventas_DiagnosticoPlus_eGestorLab.rar';
   document.body.appendChild(a);
   a.click();
   setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},1000);
