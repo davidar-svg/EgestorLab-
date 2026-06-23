@@ -964,23 +964,31 @@ function dlPDF(){
 /* ══════════════════════════════════════
    DESCARGAR RAR
 ══════════════════════════════════════ */
-
 function dlRAR(){
   if(!last){ alert('Completa el diagnóstico primero.'); return; }
   
-  // Creamos un enlace dinámico apuntando al archivo real en tu repositorio
+  // Creamos el enlace dinámico
   const a = document.createElement('a');
   
-  // Usamos el nombre EXACTO del archivo que tienes subido en tu repositorio junto al HTML
-  a.href = 'Planilla_Control_Ventas_DiagnósticoPlus_eGestorLab.rar.zip'; 
+  // Nombre exacto de tu archivo en GitHub
+  const fileUrl = 'Planilla_Control_Ventas_DiagnósticoPlus_eGestorLab.rar.zip';
   
-  // Definimos el nombre con el que se guardará en la computadora del usuario (limpio, solo .zip)
+  // Agregamos un "cache-buster" (?t=...) para obligar al navegador a descargar el archivo real
+  a.href = fileUrl + '?t=' + new Date().getTime(); 
+  
+  // Nombre con el que se guardará en el equipo del usuario
   a.download = 'Planilla_Control_Ventas_DiagnósticoPlus_eGestorLab.zip';
   
-  // Añadimos al documento, hacemos clic programático y removemos
+  // Forzamos la descarga en una pestaña o hilo secundario para mayor compatibilidad
+  a.target = '_blank';
+  
   document.body.appendChild(a);
   a.click();
-  a.remove();
+  
+  // Limpieza del elemento creado
+  setTimeout(() => {
+    a.remove();
+  }, 100);
 }</script>
 </body>
 </html>
