@@ -975,7 +975,7 @@ function dlRAR(){
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href     = url;
-  a.download = 'Planilla_Control_Ventas_DiagnósticoPlus_eGestorLab.rar.zip';
+  a.download = 'Planilla_Control_Ventas_DiagnósticoPlus_eGestorLab.zip';
   document.body.appendChild(a);
   a.click();
   setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},1000);
