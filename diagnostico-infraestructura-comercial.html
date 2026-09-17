@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Diagnóstico de Infraestructura Comercial Digital | e-gestorLab</title>
+<title>Diagnóstico de Estructura Comercial Digital | e-gestorLab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -479,7 +479,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;}
       <div class="screen active" id="s-welcome">
         <div class="welcome">
           <span class="pill">Herramienta Gratuita · eGestorLab</span>
-          <h1>Diagnóstico de <span class="hl">Infraestructura Comercial Digital</span></h1>
+          <h1>Diagnóstico de <span class="hl">Estructura Comercial Digital</span></h1>
           <p class="lead">Descubre qué está limitando el crecimiento de tu negocio</p>
           <div class="funnel">
             <div class="fn-step"><div class="fn-dot">🎯</div><div class="fn-label">Evalúa</div></div>
@@ -672,7 +672,7 @@ Tiempo estimado: 5 minutos</h4>
     <div class="ph-logo"></div>
     <div>
       <h1>e-gestorLab</h1>
-      <p>Diagnóstico de Infraestructura Comercial Digital</p>
+      <p>Diagnóstico de estructura Comercial Digital</p>
     </div>
   </div>
   <div class="pm">
@@ -879,7 +879,7 @@ function getLevel(s){
   if(s<=25) return{t:'Infraestructura Comercial Crítica',cls:'lv-critical',d:'Tu negocio presenta brechas significativas. Existe un alto riesgo de pérdida de oportunidades y baja escalabilidad.',col:'#ff6868'};
   if(s<=50) return{t:'Infraestructura Comercial Básica',cls:'lv-basic',d:'Cuentas con elementos iniciales pero falta estructura, automatización y consistencia para escalar eficientemente.',col:'#f07600'};
   if(s<=75) return{t:'Infraestructura Comercial Intermedia',cls:'lv-intermediate',d:'Tienes una base sólida. Con optimizaciones específicas puedes aumentar significativamente tu conversión comercial.',col:'#f4b400'};
-  return{t:'Infraestructura Comercial Avanzada',cls:'lv-advanced',d:'Tu negocio cuenta con una infraestructura madura. El foco debe estar en optimización continua y escalabilidad.',col:'#36e0b0'};
+     return{t:'Estructura Comercial Avanzada',cls:'lv-advanced',d:'Tu negocio cuenta con una estructura madura. El foco debe estar en optimización continua y escalabilidad.',col:'#36e0b0'};
 }
 
 function getRecs(s){
@@ -919,7 +919,7 @@ function render(d){
   const rh=document.createElement('div');rh.className='recs-title';rh.textContent='Recomendaciones para tu negocio';ra.appendChild(rh);
   if(!d.recs.length){
     const el=document.createElement('div');el.className='rec rec-ok';
-    el.innerHTML='<h5>¡Excelente trabajo!</h5><p>Tu infraestructura está bien estructurada en todas las áreas. Te recomendamos enfocarte en optimización continua y escalabilidad.</p>';
+    el.innerHTML='<h5>¡Excelente trabajo!</h5><p>Tu diseño está bien estructurado en todas las áreas. Te recomendamos enfocarte en optimización continua y escalabilidad.</p>';
     ra.appendChild(el);
   }else{
     d.recs.forEach(r=>{
@@ -952,7 +952,7 @@ function fillPrint(d){
   set('p-diag',`Con un puntaje de ${d.total}/100, la empresa ${d.biz.empresa||''} se encuentra en nivel "${d.lv.t}". ${d.lv.d}`);
   const pr=document.getElementById('p-recs');pr.innerHTML='';
   if(!d.recs.length){
-    pr.innerHTML='<div class="prec">Sin recomendaciones críticas. La infraestructura está bien estructurada en todas las áreas.</div>';
+    pr.innerHTML='<div class="prec">Sin recomendaciones críticas.el diseño está bien estructurado en todas las áreas.</div>';
   }else{
     d.recs.forEach(r=>{const el=document.createElement('div');el.className='prec';el.innerHTML=`<strong>${r.t}:</strong> ${r.d}`;pr.appendChild(el);});
   }
